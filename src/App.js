@@ -5,15 +5,31 @@ function App() {
   const [tasks, setTasks] = useState([]);
   const [task, setTask] = useState({ text: "", done: false });
 
+  // Function to remove a specific task
   const removeTask = (index) => {
     setTasks((prevTasks) => {
       const updatedTasks = prevTasks.filter((_, i) => i !== index);
-      console.log("Updated Tasks:", updatedTasks);
       return updatedTasks;
     });
   };
+
+  // Function to remove all tasks
   const removeAll = () => {
     setTasks([]);
+  };
+
+  // Function to handle the task text input
+  const handleAddTask = () => {
+    if (task.text.trim() === "") return; // Don't add empty tasks
+    setTasks([...tasks, { ...task }]); // Add new task
+    setTask({ text: "", done: false }); // Reset task input
+  };
+
+  // Function to toggle task status (done/undone)
+  const toggleTaskStatus = (index) => {
+    setTasks((prevTasks) =>
+      prevTasks.map((t, i) => (i === index ? { ...t, done: !t.done } : t))
+    );
   };
 
   return (
@@ -25,37 +41,24 @@ function App() {
         <div className="todo__input">
           <input
             type="text"
-            placeholder="Hier de tekst..."
+            placeholder="Add a task..."
             value={task.text}
             onChange={(e) => setTask({ ...task, text: e.target.value })}
           />
-          <button
-            onClick={() => {
-              if (task.text.trim() === "") return;
-              setTasks([...tasks, { ...task }]);
-              setTask({ text: "", done: false });
-            }}
-            className="button button--add"
-          >
+          <button onClick={handleAddTask} className="button button--add">
             Save task
           </button>
         </div>
         <div className="todo__list">
-          <ul className="task">
+          <ul>
             {tasks.map((t, index) => (
               <li key={index} className={t.done ? "task--false" : "task--done"}>
                 {t.text}
                 <button
+                  onClick={() => toggleTaskStatus(index)}
                   className="button button--add"
-                  onClick={() => {
-                    setTasks((prevTasks) =>
-                      prevTasks.map((task, i) =>
-                        i === index ? { ...task, done: !task.done } : task
-                      )
-                    );
-                  }}
                 >
-                  Done
+                  {t.done ? "Undo" : "Done"}
                 </button>
                 <button
                   onClick={() => removeTask(index)}
@@ -68,9 +71,11 @@ function App() {
           </ul>
         </div>
       </div>
-      <button className="button button--remove-all" onClick={() => removeAll()}>
-        remove alll
-      </button>
+      {tasks?.[0] && (
+        <button className="button button--remove-all" onClick={removeAll}>
+          Remove all
+        </button>
+      )}
     </div>
   );
 }
