@@ -55,7 +55,7 @@ function App() {
                     );
                   }}
                 >
-                  done toggle
+                  Done
                 </button>
                 <button
                   onClick={() => removeTask(index)}
